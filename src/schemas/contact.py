@@ -1,0 +1,30 @@
+from pydantic import BaseModel, Field
+from typing import Optional
+
+
+class ContactCreateSchema(BaseModel):
+    first_name: str = Field(..., min_length=3, max_length=25)
+    last_name: str = Field(..., min_length=3, max_length=25)
+    email: str = Field(..., min_length=3, max_length=75)
+    phone_number: str = Field(..., min_length=3, max_length=15)
+    birthday: str = Field(...)
+
+
+class ContactUpdateSchema(BaseModel):
+    first_name: Optional[str] = Field(None, min_length=3, max_length=25)
+    last_name: Optional[str] = Field(None, min_length=3, max_length=25)
+    email: Optional[str] = Field(None, min_length=3, max_length=75)
+    phone_number: Optional[str] = Field(None, min_length=3, max_length=15)
+    birthday: Optional[str] = Field(None)
+
+
+class ContactResponseSchema(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    email: str
+    phone_number: str
+    birthday: str
+
+    class Config:
+        orm_mode = True

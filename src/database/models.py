@@ -14,4 +14,4 @@ class Concact(Base):
     last_name: Mapped[str] = mapped_column(String(25))
     email: Mapped[str] = mapped_column(String(75))
     phone_number: Mapped[int] = mapped_column(String(15))
-    birthday: Mapped[str] = mapped_column(Date)
+    birthday: Mapped[str] = mapped_column(String(10))
