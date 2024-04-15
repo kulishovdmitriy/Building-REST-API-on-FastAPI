@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.contact import ContactCreateSchema, ContactResponseSchema, ContactUpdateSchema
 from src.database.db import get_db
 from src.repository import contacts as repositories_contacts
+from datetime import datetime, timedelta
+from src.database.models import Contact
+from sqlalchemy import select
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
@@ -12,6 +15,27 @@ async def get_contacts(limit: int = Query(10, ge=10, le=500), offset: int = Quer
                        db: AsyncSession = Depends(get_db)):
     contacts = await repositories_contacts.get_contacts(limit, offset, db)
     return contacts
+
+
+@router.get('/search', response_model=list[ContactResponseSchema])
+async def search_contacts(
+    first_name: str = Query(None),
+    last_name: str = Query(None),
+    email: str = Query(None),
+    db: AsyncSession = Depends(get_db)
+):
+    contacts = await repositories_contacts.search_contacts(first_name, last_name, email, db)
+    return contacts
+
+
+@router.get('/birthdays', response_model=list[ContactResponseSchema])
+async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
+    today = datetime.today().strftime('%Y-%m-%d')
+    next_week = (datetime.today() + timedelta(days=7)).strftime('%Y-%m-%d')
+
+    query = select(Contact).filter(Contact.birthday.between(today, next_week))
+    contacts = await db.execute(query)
+    return contacts.scalars().all()
 
 
 @router.get('/{contact_id}', response_model=ContactResponseSchema)
@@ -38,5 +62,5 @@ async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSe
 
 @router.delete('/{contact_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_db)):
-    contact = await repositories_contacts.delete_contact(contact_id, db)
-    return contact
+    await repositories_contacts.delete_contact(contact_id, db)
+    return None

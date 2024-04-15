@@ -1,13 +1,13 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Date
+from sqlalchemy import String
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class Concact(Base):
+class Contact(Base):
     __tablename__ = "contacts"
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(25))
