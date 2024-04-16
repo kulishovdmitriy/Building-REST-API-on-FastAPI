@@ -5,7 +5,7 @@ from src.database.db import get_db
 from src.repository import contacts as repositories_contacts
 from datetime import datetime, timedelta
 from src.database.models import Contact
-from sqlalchemy import select
+from sqlalchemy import select, cast, Date
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
@@ -30,10 +30,12 @@ async def search_contacts(
 
 @router.get('/birthdays', response_model=list[ContactResponseSchema])
 async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db)):
-    today = datetime.today().strftime('%Y-%m-%d')
-    next_week = (datetime.today() + timedelta(days=7)).strftime('%Y-%m-%d')
+    today = datetime.today().date()
+    next_week = (datetime.today() + timedelta(days=7)).date()
 
-    query = select(Contact).filter(Contact.birthday.between(today, next_week))
+    query = select(Contact).filter(
+        cast(Contact.birthday, Date).between(today, next_week)
+    )
     contacts = await db.execute(query)
     return contacts.scalars().all()
 
@@ -52,7 +54,7 @@ async def create_contact(body: ContactCreateSchema, db: AsyncSession = Depends(g
     return contact
 
 
-@router.put('/{contact_id}')
+@router.put('/{contact_id}', response_model=ContactResponseSchema, status_code=status.HTTP_202_ACCEPTED)
 async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSession = Depends(get_db)):
     contact = await repositories_contacts.update_contact(contact_id, body, db)
     if contact is None:

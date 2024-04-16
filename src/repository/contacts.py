@@ -1,6 +1,7 @@
+from fastapi import HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
 from src.database.models import Contact
 from src.schemas.contact import ContactUpdateSchema, ContactCreateSchema
 
@@ -18,11 +19,15 @@ async def get_contact(contact_id: int, db: AsyncSession):
 
 
 async def create_contact(body: ContactCreateSchema, db: AsyncSession):
-    contact = Contact(**body.model_dump(exclude_unset=True))
-    db.add(contact)
-    await db.commit()
-    await db.refresh(contact)
-    return contact
+    try:
+        contact = Contact(**body.model_dump(exclude_unset=True))
+        db.add(contact)
+        await db.commit()
+        await db.refresh(contact)
+        return contact
+    except SQLAlchemyError as err:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to create contact")
 
 
 async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSession):
@@ -60,14 +65,5 @@ async def search_contacts(first_name: str, last_name: str, email: str, db: Async
     if email:
         query = query.filter(Contact.email == email)
 
-    contacts = await db.execute(query)
-    return contacts.scalars().all()
-
-
-async def get_upcoming_birthdays(db: AsyncSession):
-    today = datetime.today().strftime('%Y.%m.%d')
-    next_week = (datetime.today() + timedelta(days=7)).strftime('%Y.%m.%d')
-
-    query = select(Contact).filter(Contact.birthday.between(today, next_week))
     contacts = await db.execute(query)
     return contacts.scalars().all()

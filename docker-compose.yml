@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  FastAPI:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: 'contacts_api'
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'web20123456789'
+    ports:
+      - '5432:5432'

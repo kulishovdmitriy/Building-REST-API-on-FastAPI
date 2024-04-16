@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
+from datetime import date
 
 
 class ContactCreateSchema(BaseModel):
@@ -7,7 +8,13 @@ class ContactCreateSchema(BaseModel):
     last_name: str = Field(..., min_length=3, max_length=25)
     email: str = Field(..., min_length=3, max_length=75)
     phone_number: str = Field(..., min_length=3, max_length=15)
-    birthday: str = Field(...)
+    birthday: date = Field(...)
+
+    @field_validator("birthday")
+    def check_date_format(cls, v):
+        if not isinstance(v, date):
+            raise ValueError("Invalid date format")
+        return v
 
 
 class ContactUpdateSchema(BaseModel):
@@ -15,7 +22,7 @@ class ContactUpdateSchema(BaseModel):
     last_name: Optional[str] = Field(None, min_length=3, max_length=25)
     email: Optional[str] = Field(None, min_length=3, max_length=75)
     phone_number: Optional[str] = Field(None, min_length=3, max_length=15)
-    birthday: Optional[str] = Field(None)
+    birthday: Optional[date] = Field(None)
 
 
 class ContactResponseSchema(BaseModel):
@@ -24,7 +31,7 @@ class ContactResponseSchema(BaseModel):
     last_name: str
     email: str
     phone_number: str
-    birthday: str
+    birthday: date
 
     class Config:
         orm_mode = True
