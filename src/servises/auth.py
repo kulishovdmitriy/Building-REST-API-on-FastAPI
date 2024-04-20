@@ -6,9 +6,12 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError, jwt
-
+from dotenv import load_dotenv
 from src.database.db import get_db
 from src.repository import users as repository_users
+
+
+load_dotenv()
 
 
 class Auth:

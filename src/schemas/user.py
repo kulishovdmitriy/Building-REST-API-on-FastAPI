@@ -19,4 +19,4 @@ class UserResponseSchema(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True

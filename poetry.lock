@@ -257,6 +257,17 @@ python-versions = ">=3.8"
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "python-dotenv"
+version = "1.0.1"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.extras]
+cli = ["click (>=5.0)"]
+
+[[package]]
 name = "python-jose"
 version = "3.3.0"
 description = "JOSE implementation in Python"
@@ -390,7 +401,7 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "aa7dce744c6fae78cb9fc259866dc1795d7695251239723d3ed9a26b9d5183dc"
+content-hash = "41ba7a23db73873b69c2113abee16231d79dbcf66702880a79b07ee003d27f45"
 
 [metadata.files]
 alembic = []
@@ -414,6 +425,7 @@ psycopg2-binary = []
 pyasn1 = []
 pydantic = []
 pydantic-core = []
+python-dotenv = []
 python-jose = []
 python-multipart = []
 rsa = []
