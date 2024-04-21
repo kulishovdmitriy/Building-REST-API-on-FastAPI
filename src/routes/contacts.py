@@ -4,11 +4,13 @@ from src.schemas.contact import ContactCreateSchema, ContactResponseSchema, Cont
 from src.database.db import get_db
 from src.repository import contacts as repositories_contacts
 from datetime import datetime, timedelta
-from src.database.models import Contact, User
+from src.database.models import Contact, User, Role
 from sqlalchemy import select, cast, Date
 from src.servises.auth import auth_service
+from src.servises.role import RoleAccess
 
 router = APIRouter(prefix="/contacts", tags=["contacts"])
+access_to_route_all = RoleAccess([Role.admin, Role.moderator])
 
 
 @router.get('/', response_model=list[ContactResponseSchema])
@@ -16,6 +18,14 @@ async def get_contacts(limit: int = Query(10, ge=10, le=500), offset: int = Quer
                        db: AsyncSession = Depends(get_db),
                        current_user: User = Depends(auth_service.get_current_user)):
     contacts = await repositories_contacts.get_contacts(limit, offset, db, current_user)
+    return contacts
+
+
+@router.get("/all", response_model=list[ContactResponseSchema], dependencies=[Depends(access_to_route_all)])
+async def get_all_contacts(limit: int = Query(10, ge=10, le=500), offset: int = Query(0, ge=0),
+                           db: AsyncSession = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
+    contacts = await repositories_contacts.get_all_contacts(limit, offset, db)
+    print(contacts)
     return contacts
 
 

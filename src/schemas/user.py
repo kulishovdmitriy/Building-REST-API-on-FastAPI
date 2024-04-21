@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
+from src.database.models import Role
 
 
 class UserSchema(BaseModel):
@@ -17,6 +18,7 @@ class UserResponseSchema(BaseModel):
     id: int
     username: str
     email: EmailStr
+    role: Role | None
 
     class Config:
         from_attributes = True
