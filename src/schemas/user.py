@@ -25,4 +25,4 @@ class UserResponseSchema(BaseModel):
 
 
 class RequestEmailSchema(BaseModel):
-    email = EmailStr
+    email: EmailStr
