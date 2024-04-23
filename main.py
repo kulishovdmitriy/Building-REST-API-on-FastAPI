@@ -3,11 +3,13 @@ import uvicorn
 from fastapi import Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from fastapi.staticfiles import StaticFiles
 from src.database.db import get_db
 from src.routes import contacts, auth
 
 app = fastapi.FastAPI()
+
+app.mount("/static", StaticFiles(directory='src/static'), name='static')
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(contacts.router, prefix='/api')

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserSchema, UserResponseSchema, TokenSchema, RequestEmailSchema
@@ -6,6 +6,7 @@ from src.database.db import get_db
 from src.repository import users as repositories_users
 from src.servises.auth import auth_service
 from src.servises.email import send_email
+from fastapi.responses import FileResponse
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -77,3 +78,13 @@ async def request_email(body: RequestEmailSchema, background_tasks: BackgroundTa
     if user:
         background_tasks.add_task(send_email, user.email, user.username, str(request.base_url))
     return {"message": "Check your email for confirmation"}
+
+
+@router.get('/{username}')
+async def request_email(username: str, response: Response, db: AsyncSession = Depends(get_db)):
+    print('--------------------------------------')
+    print('--------------------------------------')
+    print(f"{username} open email")
+    print('--------------------------------------')
+    print('--------------------------------------')
+    return FileResponse('src/static/open_email.png', media_type='image.png', content_disposition_type='inline')
