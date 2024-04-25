@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Query
+from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.contact import ContactCreateSchema, ContactResponseSchema, ContactUpdateSchema
 from src.database.db import get_db
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/contacts", tags=["contacts"])
 access_to_route_all = RoleAccess([Role.admin, Role.moderator])
 
 
-@router.get('/', response_model=list[ContactResponseSchema])
+@router.get('/', response_model=list[ContactResponseSchema], dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def get_contacts(limit: int = Query(10, ge=10, le=500), offset: int = Query(0, ge=0),
                        db: AsyncSession = Depends(get_db),
                        current_user: User = Depends(auth_service.get_current_user)):
@@ -29,7 +30,8 @@ async def get_all_contacts(limit: int = Query(10, ge=10, le=500), offset: int = 
     return contacts
 
 
-@router.get('/search', response_model=list[ContactResponseSchema])
+@router.get('/search', response_model=list[ContactResponseSchema],
+            dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def search_contacts(
         first_name: str = Query(None),
         last_name: str = Query(None),
@@ -41,7 +43,8 @@ async def search_contacts(
     return contacts
 
 
-@router.get('/birthdays', response_model=list[ContactResponseSchema])
+@router.get('/birthdays', response_model=list[ContactResponseSchema],
+            dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db),
                                  current_user: User = Depends(auth_service.get_current_user)):
     today = datetime.today().date()
@@ -54,7 +57,8 @@ async def get_upcoming_birthdays(db: AsyncSession = Depends(get_db),
     return contacts.scalars().all()
 
 
-@router.get('/{contact_id}', response_model=ContactResponseSchema)
+@router.get('/{contact_id}', response_model=ContactResponseSchema,
+            dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def get_contact(contact_id: int, db: AsyncSession = Depends(get_db),
                       current_user: User = Depends(auth_service.get_current_user)):
     contact = await repositories_contacts.get_contact(contact_id, db, current_user)
@@ -63,14 +67,16 @@ async def get_contact(contact_id: int, db: AsyncSession = Depends(get_db),
     return contact
 
 
-@router.post('/', response_model=ContactResponseSchema, status_code=status.HTTP_201_CREATED)
+@router.post('/', response_model=ContactResponseSchema, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def create_contact(body: ContactCreateSchema, db: AsyncSession = Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     contact = await repositories_contacts.create_contact(body, db, current_user)
     return contact
 
 
-@router.put('/{contact_id}', response_model=ContactResponseSchema, status_code=status.HTTP_202_ACCEPTED)
+@router.put('/{contact_id}', response_model=ContactResponseSchema, status_code=status.HTTP_202_ACCEPTED,
+            dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSession = Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     contact = await repositories_contacts.update_contact(contact_id, body, db, current_user)
@@ -79,7 +85,8 @@ async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSe
     return contact
 
 
-@router.delete('/{contact_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{contact_id}', status_code=status.HTTP_204_NO_CONTENT,
+               dependencies=[Depends(RateLimiter(times=1, seconds=20))])
 async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     await repositories_contacts.delete_contact(contact_id, db, current_user)
