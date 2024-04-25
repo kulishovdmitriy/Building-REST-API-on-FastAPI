@@ -1,23 +1,19 @@
 from datetime import datetime, timedelta
 from typing import Optional
-import os
 from fastapi import Depends, HTTPException, status
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError, jwt
-from dotenv import load_dotenv
 from src.database.db import get_db
 from src.repository import users as repository_users
-
-
-load_dotenv()
+from src.conf.config import config
 
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = os.getenv("API_KEY")
-    ALGORITHM = "HS256"
+    SECRET_KEY = config.API_KEY_JWT
+    ALGORITHM = config.ALGORITHM
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)

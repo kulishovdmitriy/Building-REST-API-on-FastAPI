@@ -17,6 +17,7 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = "^3.3.0"
 python-dotenv = "^1.0.1"
 fastapi-mail = "^1.4.1"
+redis = "^5.0.4"
 
 [tool.poetry.dev-dependencies]
 
