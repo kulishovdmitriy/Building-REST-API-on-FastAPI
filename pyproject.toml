@@ -19,6 +19,7 @@ python-dotenv = "^1.0.1"
 fastapi-mail = "^1.4.1"
 redis = "^5.0.4"
 fastapi-limiter = "^0.1.6"
+cloudinary = "^1.40.0"
 
 [tool.poetry.dev-dependencies]
 

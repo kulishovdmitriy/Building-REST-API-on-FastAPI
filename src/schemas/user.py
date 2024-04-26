@@ -18,6 +18,7 @@ class UserResponseSchema(BaseModel):
     id: int
     username: str
     email: EmailStr
+    avatar: str
     role: Role | None
 
     class Config:

@@ -42,3 +42,4 @@ class User(Base):
     updated_at: Mapped[date] = mapped_column("updated_at", DateTime, default=func.now(), onupdate=func.now())
     role: Mapped[Enum] = mapped_column("role", Enum(Role), default=Role.user, nullable=True)
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)
+    avatar: Mapped[str] = mapped_column(String(255), nullable=True)
