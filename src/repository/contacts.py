@@ -7,6 +7,7 @@ from src.database.models import User
 
 
 async def get_contacts(limit: int, offset: int, db: AsyncSession, current_user: User):
+    """ """
     stmt = select(Contact).filter_by(user=current_user).offset(offset).limit(limit)
     contacts = await db.execute(stmt)
     return contacts.scalars().all()
@@ -24,7 +25,9 @@ async def get_contact(contact_id: int, db: AsyncSession, current_user: User):
     return contacts.scalar_one_or_none()
 
 
-async def create_contact(body: ContactCreateSchema, db: AsyncSession, current_user: User):
+async def create_contact(
+    body: ContactCreateSchema, db: AsyncSession, current_user: User
+):
     contact = Contact(**body.model_dump(exclude_unset=True), user=current_user)
     db.add(contact)
     await db.commit()
@@ -32,7 +35,9 @@ async def create_contact(body: ContactCreateSchema, db: AsyncSession, current_us
     return contact
 
 
-async def update_contact(contact_id: int, body: ContactUpdateSchema, db: AsyncSession, current_user: User):
+async def update_contact(
+    contact_id: int, body: ContactUpdateSchema, db: AsyncSession, current_user: User
+):
     stmt = select(Contact).filter_by(id=contact_id, user=current_user)
     result = await db.execute(stmt)
     contact = result.scalar_one_or_none()
@@ -57,7 +62,9 @@ async def delete_contact(contact_id: int, db: AsyncSession, current_user: User):
     return contact
 
 
-async def search_contacts(first_name: str, last_name: str, email: str, db: AsyncSession, current_user: User):
+async def search_contacts(
+    first_name: str, last_name: str, email: str, db: AsyncSession, current_user: User
+):
     query = select(Contact).filter_by(user=current_user)
 
     if first_name:
