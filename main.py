@@ -26,14 +26,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
+# app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(contacts.router, prefix="/api")
 
 
-user_agent_ban_list = [r"Python-urllib"]
+user_agent_ban_list = ["Python-urllib"]
 
 
 @app.middleware("http")
