@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import fastapi
 import uvicorn
 import re
@@ -26,18 +28,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
+BASE_DIR = Path(__file__).parent
+directory = BASE_DIR.joinpath("src").joinpath("static")
+app.mount("/static", StaticFiles(directory=directory), name="static")
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(contacts.router, prefix="/api")
 
 
-user_agent_ban_list = ["Python-urllib"]
+user_agent_ban_list = [r"Python-urllib"]
 
 
 @app.middleware("http")
 async def user_agent_ban_middleware(request: Request, call_next: Callable):
+    """
+    The user_agent_ban_middleware function is a middleware function that checks the user-agent header of an incoming request.
+    If the user-agent matches any of the patterns in our ban list, then we return a 403 Forbidden response with an error message.
+    Otherwise, we call next and let FastAPI handle it.
+
+    :param request: Request: Get the user-agent from the request headers
+    :param call_next: Callable: Pass the next middleware function in the chain to be called
+    :return: A jsonresponse object if the user_agent matches one of the banned patterns
+
+    """
     user_agent = request.headers.get("user-agent")
     for ban_pattern in user_agent_ban_list:
         if re.search(ban_pattern, user_agent):
@@ -51,17 +66,41 @@ async def user_agent_ban_middleware(request: Request, call_next: Callable):
 
 @app.on_event("startup")
 async def startup():
+    """
+    The startup function is called when the application starts up.
+    It's a good place to initialize things that are needed by your app,
+    like connecting to databases or initializing caches.
+
+    :return: A value that is passed to the fastapi instance
+
+    """
     r = await redis.Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=0)
     await FastAPILimiter.init(r)
 
 
 @app.get("/")
 def index():
+    """
+    The index function is the default function that will be called when a user
+    visits the root of your API. It returns a simple message to let users know
+    that they have successfully connected to your API.
+
+    :return: A dictionary in json format
+
+    """
     return {"message": "Hello world"}
 
 
 @app.get("/api/healthchecker")
 async def healthchecker(db: AsyncSession = Depends(get_db)):
+    """
+    The healthchecker function is a simple function that checks if the database is up and running.
+    It does this by making a request to the database, which will raise an exception if it's not working.
+
+    :param db: AsyncSession: Inject the database session
+    :return: A json object with a message
+
+    """
     try:
         # Make request
         result = await db.execute(text("SELECT 1"))

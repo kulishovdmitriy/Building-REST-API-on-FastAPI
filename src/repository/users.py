@@ -16,7 +16,7 @@ async def get_user_by_email(email: str, db: AsyncSession = Depends(get_db)):
     :param email: str: Specify the email address of the user to be retrieved
     :param db: AsyncSession: Pass the database session to the function
     :return: A single user object
-    :doc-author: Trelent
+
     """
     stmt = select(User).filter_by(email=email)
     user = await db.execute(stmt)
@@ -31,7 +31,7 @@ async def create_user(body: UserSchema, db: AsyncSession = Depends(get_db)):
     :param body: UserSchema: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
     :return: A user object
-    :doc-author: Trelent
+
     """
     avatar: Optional[str] = None
     new_user = User(**body.model_dump(), avatar=avatar)
@@ -49,7 +49,7 @@ async def update_token(user: User, token: str | None, db: AsyncSession):
     :param token: str | None: Specify the type of token
     :param db: AsyncSession: Pass the database session to the function
     :return: A value of type none
-    :doc-author: Trelent
+
     """
     user.refresh_token = token
     await db.commit()
@@ -64,7 +64,7 @@ async def confirmed_email(email: str, db: AsyncSession) -> None:
     :param email: str: Get the user's email address, and the db: asyncsession parameter is used to connect to our database
     :param db: AsyncSession: Pass the database connection to the function
     :return: None
-    :doc-author: Trelent
+
     """
     user = await get_user_by_email(email, db)
     user.confirmed = True
@@ -79,8 +79,9 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     :param url: str | None: Specify that the url parameter can be either a string or none
     :param db: AsyncSession: Pass the database session to the function
     :return: The updated user object
-    :doc-author: Trelent
+
     """
+
     user = await get_user_by_email(email, db)
     user.avatar = url
     await db.commit()

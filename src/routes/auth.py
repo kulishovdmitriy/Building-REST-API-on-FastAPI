@@ -50,8 +50,9 @@ async def signup(
     :param request: Request: Get the base url of the request
     :param db: AsyncSession: Get the database session
     :return: A new user
-    :doc-author: Trelent
+
     """
+
     exist_user = await repositories_users.get_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(
@@ -73,8 +74,9 @@ async def login(
     :param body: OAuth2PasswordRequestForm: Validate the request body
     :param db: AsyncSession: Get a database session
     :return: A token
-    :doc-author: Trelent
+
     """
+
     user = await repositories_users.get_user_by_email(body.username, db)
     if user is None:
         raise HTTPException(
@@ -114,8 +116,9 @@ async def refresh_token(
     :param credentials: HTTPAuthorizationCredentials: Get the authorization header from the request
     :param db: AsyncSession: Connect to the database
     :return: A dict with the access_token, refresh_token and token type
-    :doc-author: Trelent
+
     """
+
     token = credentials.credentials
     email = await auth_service.decode_refresh_token(token)
     user = await repositories_users.get_user_by_email(email, db)
@@ -139,17 +142,18 @@ async def refresh_token(
 async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
     """
     The confirmed_email function is used to confirm a user's email address.
-        It takes the token from the URL and uses it to get the user's email address.
-        Then, it checks if that user exists in our database, and if they do not exist, we return an error message.
-        If they do exist but their account has already been confirmed, we return a success message saying so.
-        Otherwise (if they exist and their account has not yet been confirmed), we update their record in our database
-            by setting &quot;confirmed&quot; to True for that particular record.
+    It takes the token from the URL and uses it to get the user's email address.
+    Then, it checks if that user exists in our database, and if they do not exist, we return an error message.
+    If they do exist but their account has already been confirmed, we return a success message saying so.
+    Otherwise (if they exist and their account has not yet been confirmed), we update their record in our database
+    by setting &quot;confirmed&quot; to True for that particular record.
 
     :param token: str: Get the token from the url
     :param db: AsyncSession: Pass the database session to the function
     :return: A message to the user, which is then displayed on the frontend
-    :doc-author: Trelent
+
     """
+
     email = await auth_service.get_email_from_token(token)
     user = await repositories_users.get_user_by_email(email, db)
     if user is None:
@@ -180,8 +184,9 @@ async def request_email(
     :param request: Request: Get the base_url of the request
     :param db: AsyncSession: Get the database session
     :return: A message that the user can see
-    :doc-author: Trelent
+
     """
+
     user = await repositories_users.get_user_by_email(body.email, db)
 
     if user.confirmed:
@@ -199,14 +204,15 @@ async def request_email(
 ):
     """
     The request_email function is used to send an email to the user's email address.
-        The function takes in a username and returns a response object with the image of an open envelope.
+    The function takes in a username and returns a response object with the image of an open envelope.
 
     :param username: str: Get the username of the user that is requesting to open their email
     :param response: Response: Return a response to the user
     :param db: AsyncSession: Get the database session
     :return: A file response, which is a type of response that returns a file
-    :doc-author: Trelent
+
     """
+
     print("--------------------------------------")
     print("--------------------------------------")
     print(f"{username} open email")

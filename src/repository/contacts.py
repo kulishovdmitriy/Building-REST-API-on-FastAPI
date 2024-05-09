@@ -15,7 +15,7 @@ async def get_contacts(limit: int, offset: int, db: AsyncSession, current_user: 
     :param db: AsyncSession: Pass the database session to the function
     :param current_user: User: Get the current user from the database
     :return: A list of contacts
-    :doc-author: Trelent
+
     """
     stmt = select(Contact).filter_by(user=current_user).offset(offset).limit(limit)
     contacts = await db.execute(stmt)
@@ -30,7 +30,7 @@ async def get_all_contacts(limit: int, offset: int, db: AsyncSession):
     :param offset: int: Specify how many rows to skip
     :param db: AsyncSession: Pass the database session to the function
     :return: A list of contacts
-    :doc-author: Trelent
+
     """
     stmt = select(Contact).offset(offset).limit(limit)
     contacts = await db.execute(stmt)
@@ -45,7 +45,7 @@ async def get_contact(contact_id: int, db: AsyncSession, current_user: User):
     :param db: AsyncSession: Pass in the database session
     :param current_user: User: Ensure that the user is only able to access their own contacts
     :return: A contact object
-    :doc-author: Trelent
+
     """
     stmt = select(Contact).filter_by(id=contact_id, user=current_user)
     contacts = await db.execute(stmt)
@@ -62,7 +62,7 @@ async def create_contact(
     :param db: AsyncSession: Pass the database session to the function
     :param current_user: User: Get the user that is currently logged in
     :return: A contact object, so the response schema is contactschema
-    :doc-author: Trelent
+
     """
     contact = Contact(**body.model_dump(exclude_unset=True), user=current_user)
     db.add(contact)
@@ -82,7 +82,7 @@ async def update_contact(
     :param db: AsyncSession: Pass the database session to the function
     :param current_user: User: Make sure that the user is only able to delete
     :return: The updated contact
-    :doc-author: Trelent
+
     """
     stmt = select(Contact).filter_by(id=contact_id, user=current_user)
     result = await db.execute(stmt)
@@ -106,7 +106,7 @@ async def delete_contact(contact_id: int, db: AsyncSession, current_user: User):
     :param db: AsyncSession: Pass in the database session
     :param current_user: User: Ensure that the user is only able to delete contacts that they own
     :return: A contact object
-    :doc-author: Trelent
+
     """
     stmt = select(Contact).filter_by(id=contact_id, user=current_user)
     contact = await db.execute(stmt)
@@ -129,8 +129,9 @@ async def search_contacts(
     :param db: AsyncSession: Pass the database connection to the function
     :param current_user: User: Filter the contacts by user
     :return: A list of contact objects
-    :doc-author: Trelent
+
     """
+
     query = select(Contact).filter_by(user=current_user)
 
     if first_name:

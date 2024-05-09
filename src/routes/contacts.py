@@ -30,6 +30,7 @@ async def get_contacts(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The get_contacts function returns a list of contacts.
 
     :param limit: int: Limit the number of results returned
@@ -41,7 +42,7 @@ async def get_contacts(
     :param current_user: User: Get the current user from the database
     :param : Get the contact id
     :return: A list of contacts
-    :doc-author: Trelent
+
     """
     contacts = await repositories_contacts.get_contacts(limit, offset, db, current_user)
     return contacts
@@ -59,6 +60,7 @@ async def get_all_contacts(
     user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The get_all_contacts function returns a list of contacts.
 
     :param limit: int: Limit the number of contacts returned
@@ -70,7 +72,7 @@ async def get_all_contacts(
     :param user: User: Get the user who sent the request
     :param : Get the contact by id
     :return: A list of contacts
-    :doc-author: Trelent
+
     """
     contacts = await repositories_contacts.get_all_contacts(limit, offset, db)
     print(contacts)
@@ -90,6 +92,7 @@ async def search_contacts(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The search_contacts function searches for contacts in the database.
 
     :param first_name: str: Receive the first name of a contact
@@ -99,7 +102,7 @@ async def search_contacts(
     :param current_user: User: Get the current user
     :param : Specify the type of data that is expected in the request body
     :return: A list of contacts
-    :doc-author: Trelent
+
     """
     contacts = await repositories_contacts.search_contacts(
         first_name, last_name, email, db, current_user
@@ -117,13 +120,14 @@ async def get_upcoming_birthdays(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The get_upcoming_birthdays function returns a list of contacts whose birthday is within the next week.
 
     :param db: AsyncSession: Get the database session
     :param current_user: User: Get the current user from the database
     :param : Get the database session
     :return: A list of contacts with a birthday between today and the next week
-    :doc-author: Trelent
+
     """
     today = datetime.today().date()
     next_week = (datetime.today() + timedelta(days=7)).date()
@@ -148,6 +152,7 @@ async def get_contact(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The get_contact function is a GET request that returns the contact with the given ID.
     If no such contact exists, it raises an HTTP 404 error.
 
@@ -156,7 +161,7 @@ async def get_contact(
     :param current_user: User: Get the current user from the database
     :param : Get the contact id from the url
     :return: A contact object, which is a pydantic model
-    :doc-author: Trelent
+
     """
     contact = await repositories_contacts.get_contact(contact_id, db, current_user)
     if contact is None:
@@ -176,6 +181,7 @@ async def create_contact(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The create_contact function creates a new contact in the database.
 
     :param body: ContactCreateSchema: Validate the request body
@@ -183,7 +189,7 @@ async def create_contact(
     :param current_user: User: Get the user who is currently logged in
     :param : Get the contact id from the url
     :return: A contact object
-    :doc-author: Trelent
+
     """
     contact = await repositories_contacts.create_contact(body, db, current_user)
     return contact
@@ -202,6 +208,7 @@ async def update_contact(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The update_contact function updates a contact in the database.
 
     :param contact_id: int: Get the contact id from the url
@@ -210,7 +217,7 @@ async def update_contact(
     :param current_user: User: Get the user who is currently logged in
     :param : Get the contact id
     :return: A contact object
-    :doc-author: Trelent
+
     """
     contact = await repositories_contacts.update_contact(
         contact_id, body, db, current_user
@@ -231,6 +238,7 @@ async def delete_contact(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
+
     The delete_contact function deletes a contact from the database.
 
     :param contact_id: int: Specify the contact to be deleted
@@ -238,7 +246,7 @@ async def delete_contact(
     :param current_user: User: Get the user id from the current_user object
     :param : Specify the contact id of the contact to be deleted
     :return: None, which means that the api endpoint will return an empty response
-    :doc-author: Trelent
+
     """
     await repositories_contacts.delete_contact(contact_id, db, current_user)
     return None

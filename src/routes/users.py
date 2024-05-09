@@ -27,12 +27,12 @@ cloudinary.config(
 async def get_user(user: User = Depends(auth_service.get_current_user)):
     """
     The get_user function is a dependency that will be injected into the
-        get_current_user function. It will return the user object if it exists,
-        otherwise it will raise an HTTPException with a 401 status code.
+    get_current_user function. It will return the user object if it exists,
+    otherwise it will raise an HTTPException with a 401 status code.
 
     :param user: User: Define the type of the parameter
     :return: The user object
-    :doc-author: Trelent
+
     """
     return user
 
@@ -55,7 +55,7 @@ async def get_avatar(
     :param db: AsyncSession: Pass the database session to the repository layer
     :param : Get the current user from the database
     :return: The user object with the updated avatar_url field
-    :doc-author: Trelent
+
     """
     public_id = f"Web16/{user.email}"
     res = cloudinary.uploader.upload(file.file, public_id=public_id, owerite=True)
